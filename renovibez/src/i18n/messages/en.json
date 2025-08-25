@@ -1,0 +1,51 @@
+{
+  "navigation": {
+    "inspiration": "Inspiration",
+    "projects": "Projects", 
+    "guides": "Guides",
+    "login": "Login",
+    "signIn": "Sign In"
+  },
+  "home": {
+    "hero": {
+      "title": "Transform Your Home with Trusted Professionals",
+      "subtitle": "Select your renovation project, get matched with vetted contractors, and transform your space with confidence."
+    },
+    "projects": {
+      "title": "Choose Your Renovation Project",
+      "subtitle": "Discover our popular renovation packages designed to transform your space",
+      "startingFrom": "Starting from",
+      "duration": "Duration",
+      "selectAndMatch": "Select & Get Matched"
+    }
+  },
+  "projects": {
+    "bathroom": {
+      "title": "Modern Bathroom Renovation",
+      "description": "Complete bathroom transformation with contemporary fixtures and finishes",
+      "features": [
+        "Walk-in shower with glass doors",
+        "Floating vanity with LED mirror", 
+        "Premium tiles and fixtures"
+      ]
+    },
+    "kitchen": {
+      "title": "Complete Kitchen Remodel",
+      "description": "Full kitchen renovation with new cabinets, countertops, and appliances",
+      "features": [
+        "Custom kitchen cabinets",
+        "Quartz countertops",
+        "Modern appliance package"
+      ]
+    },
+    "flooring": {
+      "title": "Hardwood Flooring Installation",
+      "description": "Premium hardwood flooring throughout your living spaces",
+      "features": [
+        "Premium hardwood materials",
+        "Professional installation",
+        "5-year warranty"
+      ]
+    }
+  }
+}

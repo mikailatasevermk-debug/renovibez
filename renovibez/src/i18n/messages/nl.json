@@ -1,0 +1,51 @@
+{
+  "navigation": {
+    "inspiration": "Inspiratie",
+    "projects": "Projecten",
+    "guides": "Gidsen", 
+    "login": "Inloggen",
+    "signIn": "Registreren"
+  },
+  "home": {
+    "hero": {
+      "title": "Transformeer uw huis met vertrouwde professionals",
+      "subtitle": "Selecteer uw renovatieproject, word gekoppeld aan geverifieerde aannemers en transformeer uw ruimte met vertrouwen."
+    },
+    "projects": {
+      "title": "Kies uw renovatieproject",
+      "subtitle": "Ontdek onze populaire renovatiepakketten ontworpen om uw ruimte te transformeren",
+      "startingFrom": "Vanaf",
+      "duration": "Duur",
+      "selectAndMatch": "Selecteer & Word Gekoppeld"
+    }
+  },
+  "projects": {
+    "bathroom": {
+      "title": "Moderne badkamerrenovatie",
+      "description": "Complete badkamertransformatie met hedendaagse armaturen en afwerkingen",
+      "features": [
+        "Inloopdouche met glazen deuren",
+        "Zwevend badmeubel met LED-spiegel",
+        "Hoogwaardige tegels en armaturen"
+      ]
+    },
+    "kitchen": {
+      "title": "Volledige keukenverbouwing",
+      "description": "Volledige keukenrenovatie met nieuwe kasten, werkbladen en apparaten",
+      "features": [
+        "Aangepaste keukenkasten",
+        "Kwarts werkbladen",
+        "Modern apparatenpakket"
+      ]
+    },
+    "flooring": {
+      "title": "Installatie van hardhouten vloeren",
+      "description": "Hoogwaardige hardhouten vloeren door uw hele woonruimte",
+      "features": [
+        "Hoogwaardige hardhouten materialen",
+        "Professionele installatie",
+        "5 jaar garantie"
+      ]
+    }
+  }
+}
