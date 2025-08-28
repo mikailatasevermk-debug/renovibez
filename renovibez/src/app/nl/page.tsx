@@ -31,7 +31,6 @@ import {
 } from "@/components/animations";
 import { useState, useRef } from "react";
 import { animation } from "@/lib/design-system";
-import Image from "next/image";
 
 export default function NLHomeEnhanced() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -399,7 +398,7 @@ export default function NLHomeEnhanced() {
                     ))}
                   </div>
                   <p className="text-muted-foreground mb-6 italic">
-                    "{testimonial.text}"
+                    &quot;{testimonial.text}&quot;
                   </p>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-terracotta/10 rounded-full flex items-center justify-center">

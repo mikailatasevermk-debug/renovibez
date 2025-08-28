@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, MotionProps } from "framer-motion";
+import { motion, MotionProps } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { ReactNode, useEffect, useState } from "react";
 import { animation } from "@/lib/design-system";
@@ -42,11 +42,13 @@ export const FadeIn = ({
 export const StaggerContainer = ({ 
   children,
   stagger = animation.stagger.normal,
+  className,
   ...props
 }: {
   children: ReactNode;
   stagger?: number;
-} & MotionProps) => {
+  className?: string;
+} & Omit<MotionProps, 'className'>) => {
   const [ref, inView] = useInView({
     threshold: 0.1,
     triggerOnce: true,
@@ -64,6 +66,7 @@ export const StaggerContainer = ({
           },
         },
       }}
+      className={className}
       {...props}
     >
       {children}

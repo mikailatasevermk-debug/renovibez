@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -7,16 +5,16 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none relative overflow-hidden",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative overflow-hidden",
   {
     variants: {
       variant: {
         default:
-          "bg-terracotta text-white shadow-md hover:bg-terracotta/90 focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2",
+          "bg-terracotta text-white shadow-md hover:bg-terracotta/90 hover:shadow-lg focus-visible:ring-terracotta",
         destructive:
-          "bg-red-500 text-white shadow-md hover:bg-red-600 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2",
+          "bg-red-500 text-white shadow-md hover:bg-red-600 hover:shadow-lg focus-visible:ring-red-500",
         outline:
-          "border-2 border-terracotta bg-transparent text-terracotta hover:bg-terracotta hover:text-white focus-visible:ring-2 focus-visible:ring-terracotta focus-visible:ring-offset-2",
+          "border-2 border-terracotta bg-transparent text-terracotta shadow-sm hover:bg-terracotta hover:text-white hover:shadow-md focus-visible:ring-terracotta",
         secondary:
           "bg-beige text-ink shadow-sm hover:bg-beige/80 focus-visible:ring-2 focus-visible:ring-beige focus-visible:ring-offset-2",
         ghost:
@@ -37,8 +35,8 @@ const buttonVariants = cva(
   }
 );
 
-interface ButtonProps
-  extends React.ComponentProps<"button">,
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   ripple?: boolean;
@@ -65,21 +63,29 @@ const ButtonEnhanced = React.forwardRef<HTMLButtonElement, ButtonProps>(
       props.onClick?.(e);
     };
 
-    const Comp = asChild ? Slot : motion.button;
+    const baseClassName = cn(buttonVariants({ variant, size, className }));
     
-    const motionProps = !asChild ? {
-      whileHover: { scale: 1.02 },
-      whileTap: { scale: 0.98 },
-      transition: { type: "spring", stiffness: 400, damping: 25 },
-    } : {};
+    if (asChild) {
+      return (
+        <Slot
+          ref={ref}
+          className={baseClassName}
+          onClick={handleClick}
+          {...props}
+        />
+      );
+    }
 
     return (
-      <Comp
+      <motion.button
         ref={ref}
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={baseClassName}
         onClick={handleClick}
-        {...motionProps}
-        {...props}
+        disabled={props.disabled}
+        type={props.type || "button"}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
         {props.children}
         {ripple && ripples.map((ripple) => (
@@ -89,25 +95,15 @@ const ButtonEnhanced = React.forwardRef<HTMLButtonElement, ButtonProps>(
             initial={{ opacity: 0.5 }}
             animate={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
-          >
-            <motion.span
-              className="absolute bg-white/30 rounded-full"
-              style={{
-                left: ripple.x,
-                top: ripple.y,
-                transform: "translate(-50%, -50%)",
-              }}
-              initial={{ width: 0, height: 0 }}
-              animate={{ width: 200, height: 200 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            />
-          </motion.span>
+            style={{
+              background: `radial-gradient(circle at ${ripple.x}px ${ripple.y}px, rgba(255, 255, 255, 0.5) 0%, transparent 70%)`,
+            }}
+          />
         ))}
-      </Comp>
+      </motion.button>
     );
   }
 );
-
 ButtonEnhanced.displayName = "ButtonEnhanced";
 
 export { ButtonEnhanced, buttonVariants };

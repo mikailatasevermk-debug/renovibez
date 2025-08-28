@@ -3,12 +3,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { User, HardHat, LogOut, Settings, Calendar, MessageSquare } from "lucide-react";
+import { User, HardHat, LogOut, Calendar, MessageSquare } from "lucide-react";
 
 interface AccountDropdownProps {
   isOpen: boolean;
   onClose: () => void;
-  triggerRef: React.RefObject<HTMLButtonElement>;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
 }
 
 export default function AccountDropdown({ isOpen, onClose, triggerRef }: AccountDropdownProps) {

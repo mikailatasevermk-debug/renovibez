@@ -10,8 +10,6 @@ import {
   Calendar, 
   Shield, 
   Info, 
-  CheckCircle,
-  Clock,
   User
 } from "lucide-react";
 import Link from "next/link";
@@ -63,6 +61,7 @@ export default function ChatPage({ params }: { params: Promise<{ matchId: string
       fetchMatchDetails(matchId);
       fetchMessages(matchId);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollToBottom = () => {

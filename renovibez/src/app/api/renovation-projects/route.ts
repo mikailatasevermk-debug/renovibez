@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const renovationProjects = await prisma.renovationProject.findMany({
+    const renovationProjects = await prisma.renovationTemplate.findMany({
       where: {
         active: true,
       },

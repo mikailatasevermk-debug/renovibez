@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,11 +16,11 @@ interface Match {
   specialties: string[];
   nameRevealed: boolean;
   contractor?: {
-    companyName: string;
+    name?: string;
   };
 }
 
-export default function MatchesPage() {
+function MatchesContent() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,27 +67,33 @@ export default function MatchesPage() {
           label: "C",
           rating: 4.9,
           reviewCount: 18,
-          city: "Haarlem",
-          specialties: ["Badkamer", "Slaapkamer", "Loodgieterwerk"],
+          city: "Amsterdam",
+          specialties: ["Algemeen", "Badkamer", "Tegel"],
           nameRevealed: false
         }
       ];
-
+      
       setMatches(mockMatches);
-    } catch (err) {
+      setLoading(false);
+    } catch {
       setError('Failed to load matches');
-      console.error('Error fetching matches:', err);
-    } finally {
       setLoading(false);
     }
   };
 
+  const handleAcceptMatch = async (matchId: string) => {
+    // Handle accepting the match - navigate to chat
+    window.location.href = `/nl/chat/${matchId}`;
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-terracotta mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Matches worden geladen...</p>
+      <div className="min-h-screen bg-bg p-8">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-terracotta mx-auto"></div>
+            <p className="mt-4 text-ink">Uw matches worden geladen...</p>
+          </div>
         </div>
       </div>
     );
@@ -95,191 +101,148 @@ export default function MatchesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Link href="/nl/projecten">
-            <Button className="bg-terracotta text-white hover:bg-terracotta/90">
-              Terug naar Projecten
-            </Button>
-          </Link>
+      <div className="min-h-screen bg-bg p-8">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center py-12">
+            <p className="text-red-500">{error}</p>
+            <Link href="/nl/projecten" className="mt-4 inline-block">
+              <Button>Terug naar projecten</Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <section className="py-16 px-4 text-center">
-        <div className="container mx-auto max-w-4xl">
-          <div className="flex items-center justify-center mb-6">
-            <CheckCircle className="h-12 w-12 text-terracotta mr-4" />
-            <h1 className="text-4xl md:text-5xl font-bold text-ink">
-              Perfect gematcht!
-            </h1>
-          </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Wij hebben 3 geverifieerde aannemers voor u geselecteerd. 
-            Start een chat om uw project te bespreken en plan een bezoek in.
+    <div className="min-h-screen bg-bg p-8">
+      <div className="container mx-auto max-w-6xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-ink mb-2">
+            Uw matches
+          </h1>
+          <p className="text-muted-foreground">
+            We hebben 3 gekwalificeerde aannemers gevonden voor uw project
           </p>
         </div>
-      </section>
 
-      {/* Anonymous Matching Info */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <Card className="glass-card border-0 p-6 mb-8">
-            <div className="flex items-start gap-4">
-              <div className="bg-terracotta/10 p-3 rounded-full">
-                <Users className="h-6 w-6 text-terracotta" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-ink mb-2">Anonieme Matching Actief</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  De aannemers zijn gelabeld als A, B en C om eerlijke vergelijking te garanderen. 
-                  Hun identiteit wordt pas onthuld nadat u een bezoek plant.
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <CheckCircle className="h-3 w-3" />
-                    <span>Alle aannemers zijn geverifieerd</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <CheckCircle className="h-3 w-3" />
-                    <span>Beoordeeld op vakmanschap</span>
-                  </div>
-                </div>
-              </div>
+        {/* Status bar */}
+        <div className="bg-white p-4 rounded-lg shadow-sm mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              <span className="text-sm text-ink">Alle aannemers zijn geverifieerd en verzekerd</span>
             </div>
-          </Card>
-        </div>
-      </section>
-
-      {/* Matches Grid */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {matches.map((match) => (
-              <Card key={match.matchId} className="glass-card border-0 overflow-hidden">
-                {/* Header with Label */}
-                <div className="bg-terracotta text-white p-6 text-center">
-                  <div className="text-3xl font-bold mb-2">Aannemer {match.label}</div>
-                  {match.nameRevealed && match.contractor ? (
-                    <div className="text-sm opacity-90">{match.contractor.companyName}</div>
-                  ) : (
-                    <div className="text-sm opacity-75">Identiteit verborgen</div>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  {/* Rating */}
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`h-4 w-4 ${
-                              i < Math.floor(match.rating) 
-                                ? 'text-yellow-400 fill-current' 
-                                : 'text-gray-300'
-                            }`} 
-                          />
-                        ))}
-                      </div>
-                      <span className="font-semibold text-ink">{match.rating}</span>
-                      <span className="text-sm text-muted-foreground">
-                        ({match.reviewCount} reviews)
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Location */}
-                  <div className="flex items-center justify-center mb-4 text-muted-foreground">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    <span>{match.city}</span>
-                  </div>
-
-                  {/* Specialties */}
-                  <div className="mb-6">
-                    <div className="text-sm font-medium text-ink mb-2">Specialisaties:</div>
-                    <div className="flex flex-wrap gap-1">
-                      {match.specialties.map((specialty, index) => (
-                        <span 
-                          key={index}
-                          className="bg-terracotta/10 text-terracotta px-2 py-1 rounded text-xs"
-                        >
-                          {specialty}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="space-y-3">
-                    <Link href={`/nl/chat/${match.matchId}`}>
-                      <Button className="w-full bg-terracotta text-white hover:bg-terracotta/90">
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Start Chat
-                      </Button>
-                    </Link>
-                    {match.nameRevealed && (
-                      <div className="text-center">
-                        <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          Identiteit onthuld
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
+            <div className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-terracotta" />
+              <span className="text-sm text-ink">{matches.length} aannemers beschikbaar</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Instructions */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <Card className="glass-card border-0 p-8">
-            <h3 className="text-2xl font-bold text-center mb-6 text-ink">
-              Volgende Stappen
-            </h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="bg-terracotta/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-terracotta font-bold">1</span>
+        {/* Matches Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {matches.map((match) => (
+            <Card key={match.matchId} className="glass-card p-6">
+              {/* Anonieme label */}
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center text-white font-bold text-xl">
+                  {match.label}
                 </div>
-                <h4 className="font-semibold text-ink mb-2">Chat & Vergelijk</h4>
-                <p className="text-sm text-muted-foreground">
-                  Start gesprekken met de aannemers. Bespreek uw wensen en stel vragen.
-                </p>
+                <div className="text-right">
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                    <span className="font-semibold">{match.rating}</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">({match.reviewCount} reviews)</span>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="bg-terracotta/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-terracotta font-bold">2</span>
-                </div>
-                <h4 className="font-semibold text-ink mb-2">Plan Bezoek</h4>
-                <p className="text-sm text-muted-foreground">
-                  Plan een bezoek in voor een persoonlijke offerte en kennismaking.
-                </p>
+
+              {/* Location */}
+              <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span>{match.city}</span>
               </div>
-              <div className="text-center">
-                <div className="bg-terracotta/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-terracotta font-bold">3</span>
+
+              {/* Specialties */}
+              <div className="mb-6">
+                <p className="text-sm font-medium mb-2">Specialiteiten:</p>
+                <div className="flex flex-wrap gap-1">
+                  {match.specialties.map((specialty, idx) => (
+                    <span 
+                      key={idx}
+                      className="px-2 py-1 bg-terracotta/10 text-terracotta text-xs rounded-full"
+                    >
+                      {specialty}
+                    </span>
+                  ))}
                 </div>
-                <h4 className="font-semibold text-ink mb-2">Kies & Start</h4>
-                <p className="text-sm text-muted-foreground">
-                  Kies de beste aannemer en start uw droomrenovatie!
-                </p>
+              </div>
+
+              {/* Action button */}
+              <Button 
+                onClick={() => handleAcceptMatch(match.matchId)}
+                className="w-full"
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Start gesprek
+              </Button>
+            </Card>
+          ))}
+        </div>
+
+        {/* Info section */}
+        <div className="mt-12 bg-white p-6 rounded-lg">
+          <h2 className="text-xl font-bold mb-4">Hoe het werkt</h2>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-terracotta font-semibold text-sm">1</span>
+              </div>
+              <div>
+                <p className="font-medium">Start een gesprek</p>
+                <p className="text-sm text-muted-foreground">Chat anoniem met de aannemers om uw project te bespreken</p>
               </div>
             </div>
-          </Card>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-terracotta font-semibold text-sm">2</span>
+              </div>
+              <div>
+                <p className="font-medium">Ontvang offertes</p>
+                <p className="text-sm text-muted-foreground">Krijg gedetailleerde prijsopgaven van geïnteresseerde aannemers</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-terracotta/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-terracotta font-semibold text-sm">3</span>
+              </div>
+              <div>
+                <p className="font-medium">Kies uw aannemer</p>
+                <p className="text-sm text-muted-foreground">Selecteer de beste optie en onthul contactgegevens wanneer u klaar bent</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
     </div>
+  );
+}
+
+export default function MatchesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-bg p-8">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-terracotta mx-auto"></div>
+            <p className="mt-4 text-ink">Laden...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <MatchesContent />
+    </Suspense>
   );
 }

@@ -21,11 +21,11 @@ export async function PATCH(
     const existingMatch = await prisma.match.findUnique({
       where: { id: matchId },
       include: {
-        project: true,
+        request: true,
       },
     });
 
-    if (!existingMatch || existingMatch.project.userId !== session.user.id) {
+    if (!existingMatch || existingMatch.request.userId !== session.user.id) {
       return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     }
 
@@ -44,28 +44,21 @@ export async function PATCH(
             },
           },
         },
-        project: {
-          include: {
-            renovationProject: true,
-          },
-        },
+        request: true,
+        template: true,
       },
     });
 
-    // If accepted, update project status and decline other matches
-    if (status === 'ACCEPTED') {
-      await prisma.project.update({
-        where: { id: existingMatch.projectId },
-        data: { status: 'MATCHED' },
-      });
-
-      // Decline other matches for the same project
+    // If status is changing to CHATTING or beyond, cancel other matches for the same request
+    if (status === 'CHATTING' || status === 'VISIT_PROPOSED' || status === 'VISIT_CONFIRMED') {
+      // Cancel other matches for the same request
       await prisma.match.updateMany({
         where: {
-          projectId: existingMatch.projectId,
+          requestId: existingMatch.requestId,
           id: { not: matchId },
+          status: 'MATCHED',
         },
-        data: { status: 'DECLINED' },
+        data: { status: 'CANCELLED' },
       });
     }
 

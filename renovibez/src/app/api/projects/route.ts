@@ -2,14 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
-interface ContractorProfile {
-  id: string;
-  businessName: string;
-  yearsExperience: number;
-  rating: number;
-  verified: boolean;
-}
-
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
@@ -19,31 +11,38 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { renovationProjectId, budget, preferredStartDate, description, address } = body;
+    const { templateId, budget, preferredStartDate, description, address } = body;
 
-    // Create the project
-    const project = await prisma.project.create({
+    // Create the renovation request with scope
+    const scope = JSON.stringify({
+      budget: budget ? parseFloat(budget) : null,
+      startDate: preferredStartDate ? new Date(preferredStartDate) : null,
+      description: description || '',
+      address: address || '',
+    });
+
+    const renovationRequest = await prisma.renovationRequest.create({
       data: {
         userId: session.user.id,
-        renovationProjectId,
-        budget: budget ? parseFloat(budget) : null,
-        preferredStartDate: preferredStartDate ? new Date(preferredStartDate) : null,
-        description,
-        address,
-        status: 'PENDING',
-      },
-      include: {
-        renovationProject: true,
+        scope: scope,
       },
     });
 
-    // Find 3 available contractors for this project type
-    const contractors = await prisma.contractorProfile.findMany({
+    // Create request template link
+    if (templateId) {
+      await prisma.requestTemplate.create({
+        data: {
+          requestId: renovationRequest.id,
+          templateId,
+          order: 0,
+        },
+      });
+    }
+
+    // Find 3 available contractors
+    const contractors = await prisma.contractor.findMany({
       where: {
         verified: true,
-        specializations: {
-          has: project.renovationProject.category,
-        },
       },
       take: 3,
       orderBy: {
@@ -51,42 +50,27 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Create matches with the 3 contractors
+    // Create matches with the contractors
     const matches = await Promise.all(
-      contractors.map(async (contractor: ContractorProfile) => {
-        // Generate offer price (base price + some variation)
-        const basePrice = project.renovationProject.basePrice;
-        const variation = (Math.random() - 0.5) * 0.2; // ±10% variation
-        const offerPrice = basePrice * (1 + variation);
-
+      contractors.map(async (contractor) => {
         return prisma.match.create({
           data: {
-            projectId: project.id,
+            userId: session.user.id,
             contractorId: contractor.id,
-            consumerId: session.user.id,
-            status: 'OFFERED',
-            offerPrice: Math.round(offerPrice),
-            offerDetails: `Professional ${project.renovationProject.category.toLowerCase()} renovation with ${contractor.yearsExperience} years of experience.`,
+            templateId: templateId,
+            requestId: renovationRequest.id,
+            status: 'MATCHED',
           },
           include: {
-            contractor: {
-              include: {
-                user: {
-                  select: {
-                    name: true,
-                    image: true,
-                  },
-                },
-              },
-            },
+            contractor: true,
           },
         });
       })
     );
 
-    return NextResponse.json({ project, matches }, { status: 201 });
+    return NextResponse.json({ renovationRequest, matches }, { status: 201 });
   } catch (error) {
-    console.error('Error creating project:', error);
+    console.error('Error creating renovation request:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -99,12 +83,16 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const projects = await prisma.project.findMany({
+    const requests = await prisma.renovationRequest.findMany({
       where: {
         userId: session.user.id,
       },
       include: {
-        renovationProject: true,
+        requestTemplates: {
+          include: {
+            template: true,
+          },
+        },
         matches: {
           include: {
             contractor: {
@@ -125,9 +113,9 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(projects);
+    return NextResponse.json(requests);
   } catch (error) {
-    console.error('Error fetching projects:', error);
+    console.error('Error fetching renovation requests:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

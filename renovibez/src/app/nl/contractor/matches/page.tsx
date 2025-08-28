@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Clock, User, Star, ArrowRight } from "lucide-react";
+import { MessageSquare, Clock, User, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default async function ContractorMatches() {

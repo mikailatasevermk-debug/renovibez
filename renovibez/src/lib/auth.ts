@@ -1,4 +1,4 @@
-import NextAuth, { type DefaultSession, type NextAuthOptions } from "next-auth";
+import { type DefaultSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
@@ -28,6 +28,7 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: NextAuthOptions = {
+  // @ts-expect-error - Type mismatch between adapter versions
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",

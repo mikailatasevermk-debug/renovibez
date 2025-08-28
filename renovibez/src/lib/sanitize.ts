@@ -118,10 +118,16 @@ export function getContractorLabel(index: number): string {
   return labels[index] || `${index + 1}`;
 }
 
+interface Message {
+  authorUserId?: string | null;
+  authorContractorId?: string | null;
+  createdAt: Date | string;
+}
+
 /**
  * Validates if user can send message (basic rate limiting)
  */
-export function validateMessageSending(userId: string, recentMessages: any[]): {
+export function validateMessageSending(userId: string, recentMessages: Message[]): {
   canSend: boolean;
   reason?: string;
 } {

@@ -38,7 +38,7 @@ export default function ContractorLogin() {
         router.push("/nl/contractor/dashboard");
         router.refresh();
       }
-    } catch (error) {
+    } catch {
       setError("Er is een fout opgetreden. Probeer het opnieuw.");
     } finally {
       setLoading(false);

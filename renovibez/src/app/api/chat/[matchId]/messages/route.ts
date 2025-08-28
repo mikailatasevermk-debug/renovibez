@@ -130,7 +130,7 @@ export async function POST(
 
     // Verify user has access to this match based on role
     let match;
-    let contractorId = null;
+    // const contractorId = null; // Reserved for future use
     
     if (session.user.role === "CONSUMER") {
       // Consumer can access matches where they are the userId
@@ -160,10 +160,11 @@ export async function POST(
       
       // Get the contractor ID for message authoring
       if (match) {
-        const contractor = await prisma.contractor.findFirst({
-          where: { userId: session.user.id },
-        });
-        contractorId = contractor?.id;
+        // Reserved for future use:
+        // const contractor = await prisma.contractor.findFirst({
+        //   where: { userId: session.user.id },
+        // });
+        // contractorId = contractor?.id;
       }
     }
 

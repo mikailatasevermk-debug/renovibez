@@ -214,7 +214,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
               ))}
             </div>
             <blockquote className="text-lg text-muted-foreground mb-4 italic">
-              "{project.testimonial.text}"
+              &quot;{project.testimonial.text}&quot;
             </blockquote>
             <p className="font-semibold text-ink">
               — {project.testimonial.name}

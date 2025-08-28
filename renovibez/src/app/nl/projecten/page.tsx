@@ -16,7 +16,7 @@ const renovationPackages = [
     priceFrom: "12.500",
     duration: "2-3 weken",
     category: "Badkamer",
-    image: "linear-gradient(135deg, #ddd6fe 0%, #8b5cf6 100%)",
+    image: "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=600&h=400&fit=crop&crop=center&auto=format&q=80",
     highlights: [
       "Inloopdouche met glazen deuren",
       "Zwevend badmeubel met LED-spiegel",
@@ -31,7 +31,7 @@ const renovationPackages = [
     priceFrom: "25.000",
     duration: "4-5 weken",
     category: "Keuken",
-    image: "linear-gradient(135deg, #fef3c7 0%, #f59e0b 100%)",
+    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=400&fit=crop&crop=center&auto=format&q=80",
     highlights: [
       "Aangepaste keukenkasten",
       "Kwarts werkbladen", 
@@ -46,7 +46,7 @@ const renovationPackages = [
     priceFrom: "18.500",
     duration: "3-4 weken", 
     category: "Woonkamer",
-    image: "linear-gradient(135deg, #fed7d7 0%, #f56565 100%)",
+    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop&crop=center&auto=format&q=80",
     highlights: [
       "Hardhouten vloeren",
       "Ingebouwde kasten op maat",
@@ -61,7 +61,7 @@ const renovationPackages = [
     priceFrom: "15.000",
     duration: "2-3 weken",
     category: "Slaapkamer", 
-    image: "linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)",
+    image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?w=600&h=400&fit=crop&crop=center&auto=format&q=80",
     highlights: [
       "Inloopkast op maat",
       "Luxe vloerbedekking",
@@ -76,7 +76,7 @@ const renovationPackages = [
     priceFrom: "22.000",
     duration: "3-5 weken",
     category: "Buitenruimte",
-    image: "linear-gradient(135deg, #d1fae5 0%, #10b981 100%)",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=400&fit=crop&crop=center&auto=format&q=80",
     highlights: [
       "Glazen overkapping",
       "Terras aanleg",
@@ -91,7 +91,7 @@ const renovationPackages = [
     priceFrom: "8.500",
     duration: "1-2 weken",
     category: "Thuiskantoor",
-    image: "linear-gradient(135deg, #fef3c7 0%, #f59e0b 100%)",
+    image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop&crop=center&auto=format&q=80",
     highlights: [
       "Ingebouwd bureau systeem",
       "Geluidsdemping wanden",
@@ -211,8 +211,8 @@ export default function Projecten() {
                     >
                       {/* Project Image */}
                       <div 
-                        className="aspect-video relative"
-                        style={{ background: project.image }}
+                        className="aspect-video relative bg-cover bg-center"
+                        style={{ backgroundImage: `url(${project.image})` }}
                       >
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                         
