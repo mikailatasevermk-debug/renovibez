@@ -1,7 +1,0 @@
-{
-  "buildCommand": "cd renovibez && npm run build",
-  "devCommand": "cd renovibez && npm run dev",
-  "installCommand": "cd renovibez && npm install",
-  "framework": "nextjs",
-  "outputDirectory": "renovibez/.next"
-}
