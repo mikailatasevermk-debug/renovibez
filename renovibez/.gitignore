@@ -23,6 +23,9 @@
 # misc
 .DS_Store
 *.pem
+._*
+.AppleDouble
+.LSOverride
 
 # debug
 npm-debug.log*
